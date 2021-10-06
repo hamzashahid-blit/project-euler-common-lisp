@@ -38,12 +38,21 @@
 ;;(loop :for x :from 2 :upto (1- n)
 ;; We can use and since it is short circuited. This is why
 ;; we don't have to seperate it into after math
+(defun primes (n)
+  (loop :for x :from 2 :upto (sqrt n)
+    :if (and (= (mod n x) 0)
+             (null (primes x)))
+    :collect x))
+
+;; Accurate prime factors
+(defun acc-primes (n)
+  (loop :for x :from 2 :upto (1- n)
+    :if (and (= (mod n x) 0)
+             (null (primes x)))
+    :collect x))
+
 (defun p3 (n)
-  (apply #'max 
-    (loop :for x :from 2 :upto (sqrt n)
-      :if (and (= (mod n x) 0)
-            (null (primes x)))
-      collect x)))
+  (apply #'max (primes n)))
 
 ;;-------------------------------------------------------
 
@@ -65,12 +74,18 @@
 
 ;;-------------------------------------------------------
 
-(defun p5 ()
+(defun p5-slow ()
   (loop :for x :from 1
     :if (every #'identity
           (mapcar
 	        #'(lambda (y)
                 (= (mod x y) 0))
-            (loop :for i :from 2 :upto 20
+            (loop :for i :from 3 :upto 20
               :collect i)))
     :do (return x)))
+
+;; Take the LCM, faaaaaaaaaaaaaast way
+(defun p5 ()
+  (apply #'lcm
+    (loop :for i :from 1 :upto 20
+      :collect i)))
