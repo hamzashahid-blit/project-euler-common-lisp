@@ -89,3 +89,28 @@
   (apply #'lcm
     (loop :for i :from 1 :upto 20
       :collect i)))
+
+;;-------------------------------------------------------
+
+(defun sqr (num)
+  (* num num))
+
+(defun sum-squares (n)
+  (loop :for x :from 1 :upto n
+    :sum (sqr x)))
+
+(defun square-sum (n)
+  (sqr (loop :for x :from 1 :upto n
+         :sum x)))
+
+(defun p6 (n)
+  (- (square-sum n) (sum-squares n)))
+
+(defun p6-all-in-one (n)
+  (flet ((sqr (num)
+           (* num num)))
+    (-
+      (sqr (loop :for x :from 1 :upto n
+             :sum x))
+      (loop :for x :from 1 :upto n
+        :sum (sqr x)))))
