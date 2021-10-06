@@ -1,14 +1,17 @@
 #+TITLE: Project Euler in Common Lisp
 #+AUTHOR: Hamza Shahid
 #+DATE: <2021-10-06 Wed>
-#+OPTIONS: title:nil
 
-* Project Euler in Common Lisp
+* Description
   This is the progress of me solving [[https://projecteuler.net/][Project Euler problems]] to learn Common
   Lisp.
 
-  I am in no way an expert at Common Lisp or Programming. This is for my
-  practice. Altough you could use some tips I scattered throughout the project.
+  I used Nix for management and so that I don't have to install extra
+  programming stuff to my computer. If you don't care about Nix, then just
+  ignore/delete the =.envrc= and =shell.nix= files.
 
-  This project is licensed under the ~BSD 2-Clause "Simplified" License~ so do
-  whatever you want with it!
+  I am in no way an expert at Common Lisp. This is for my practice, Altough you
+  could use some tips I scattered throughout the project.
+
+  This project is licensed under the =BSD 2-Clause "Simplified" License= so do
+  whatever you want with it (following that license :wink:)!
