@@ -1,0 +1,14 @@
+#+TITLE: Project Euler in Common Lisp
+#+AUTHOR: Hamza Shahid
+#+DATE: <2021-10-06 Wed>
+#+OPTIONS: title:nil
+
+* Project Euler in Common Lisp
+  This is the progress of me solving [[https://projecteuler.net/][Project Euler problems]] to learn Common
+  Lisp.
+
+  I am in no way an expert at Common Lisp or Programming. This is for my
+  practice. Altough you could use some tips I scattered throughout the project.
+
+  This project is licensed under the ~BSD 2-Clause "Simplified" License~ so do
+  whatever you want with it!
