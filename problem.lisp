@@ -71,6 +71,6 @@
           (mapcar
 	        #'(lambda (y)
                 (= (mod x y) 0))
-            (loop :for i :from 2 :upto 10
+            (loop :for i :from 2 :upto 20
               :collect i)))
     :do (return x)))
