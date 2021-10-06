@@ -67,23 +67,10 @@
 
 (defun p5 ()
   (loop :for x :from 1
-    :if (and (= (mod x 2) 0)
-             (= (mod x 3) 0)
-             (= (mod x 4) 0)
-             (= (mod x 5) 0)
-             (= (mod x 6) 0)
-             (= (mod x 7) 0)
-             (= (mod x 8) 0)
-             (= (mod x 9) 0)
-             (= (mod x 10) 0))
+    :if (every #'identity
+          (mapcar
+	        #'(lambda (y)
+                (= (mod x y) 0))
+            (loop :for i :from 2 :upto 10
+              :collect i)))
     :do (return x)))
-
-(defmacro apply-and (n)
-  `(and ,@(tmpp n)))
-
-(defun tmpp (n)
-  (mapcar
-	#'(lambda (y)
-        (= (mod n y) 0))
-    (loop :for i :from 2 :upto 10
-      :collect i)))
