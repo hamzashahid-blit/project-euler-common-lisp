@@ -14,4 +14,4 @@
   could use some tips I scattered throughout the project.
 
   This project is licensed under the =BSD 2-Clause "Simplified" License= so do
-  whatever you want with it (following that license :wink:)!
+  whatever you want with it (following the license :wink:)!
