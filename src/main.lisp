@@ -154,15 +154,17 @@
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450"))
 
-          ;; list of digits as numbers
-          (digits (mapcar
-                    #'(lambda (a)
-                        (parse-integer (string a)))
-                    ;; turn num into a list of characters
-                    (loop :for i :across num :collect i))))
+          ;; make a list of num's digits
+          (digits (loop :for i :across num
+                    :collect (parse-integer (string i)))))
 
     ;; get the max of looping our list of digits in pairs of 13
-    (apply #'max
-      (loop :for (a b c d e f g h i j k l m) :on digits :while m
-        :collect (* a b c d e f g h i j k l m)))))
- 
+    ;; (apply #'max
+    ;;   (loop :for (a b c d e f g h i j k l m) :on digits :while m
+    ;;     :collect (* a b c d e f g h i j k l m)))
+
+    ;; SLOWER!!!
+    (loop for stuff = digits
+      then (cdr stuff)
+      until (< (length stuff) 13)
+      maximize (apply #'* (subseq stuff 0 13)))))
