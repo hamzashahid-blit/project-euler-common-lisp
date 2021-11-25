@@ -1,3 +1,9 @@
+(defpackage euler-cl
+  (:use :cl))
+(in-package :euler-cl)
+
+;; blah blah blah.
+
 ;; These problems were taken from: https://projecteuler.net
 ;; Account username: hamzashahid
 ;; Password is in keepassxc
