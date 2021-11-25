@@ -84,14 +84,15 @@
       (maximize (apply #'* (subseq digitff 0 13))))))
  
 ;; TODO for p9:
-;; 1. Fix ugly let
-;; 2. make neater
 ;; 3. prevent: a = 2, b = 3 -> a = 3, b = 2 being 2 iterations.
 ;; in other words, avoid duplicate calculation of (c^2)
+;; DONE:
+;; 1. Fix ugly let
+;; 2. make neater
 (defun p9 ()
   (iter outer (for a from 1 to 1000)
     (iter (for b from 1 to 1000)
-      (let ((c (sqrt (+ (sqr a) (sqr b)))))
-        (when (= (+ a b c) 1000)
-          (format t "~a^2 + ~a^2 = ~a^2~%" a b c)
-          (return-from outer (* a b c)))))))
+          (for c = (sqrt (+ (sqr a) (sqr b))))
+          (when (= (+ a b c) 1000)
+            (format t "~a^2 + ~a^2 = ~a^2~%" a b c)
+            (return-from outer (* a b c))))))
