@@ -9,8 +9,7 @@
   :components ((:module "src"
                 :components
                 ((:file "main")
-                 ;(:file "problem")
-                  )))
+                 (:file "main2"))))
   :description "Solving Project Euler Problems in CL"
   :in-order-to ((test-op (test-op "euler-cl/tests"))))
 
