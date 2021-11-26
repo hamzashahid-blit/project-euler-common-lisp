@@ -3,8 +3,10 @@
 ;;;; "-n" suffix is for "new" functions using libraries
 
 (defpackage euler-cl
-  (:use :cl :str :iterate :cl-punch)) ; :gtwiwtg 
+  (:use :cl :str :iterate :cl-punch)); :gtwiwtg 
 (in-package :euler-cl)
+
+;(shadowing-import 'iterate 'euler-cl)
 
 (enable-punch-syntax)
 
@@ -71,12 +73,10 @@
                         (collect (parse-integer (string i))))))
 
     ;; get the max of looping our list of digits in pairs of 13
-    ;; (apply #'max
-    ;;   (loop :for (a b c d e f g h i j k l m) :on digits :while m
-    ;;     :collect (* a b c d e f g h i j k l m)))
 
-    (iter (for (a b c d e f g h i j k l m) on digits while m)
-      (collect (* a b c d e f g h i j k l m)))
+    ;; (iter (for (a b c d e f g h i j k l m) on digits)
+    ;;   (while m)
+    ;;   (collect (* a b c d e f g h i j k l m)))
 
     ;; SLOWER!!!
     (iter (for digitff :initially digits :then (cdr digitff))
@@ -96,3 +96,14 @@
           (when (= (+ a b c) 1000)
             (format t "~a^2 + ~a^2 = ~a^2~%" a b c)
             (return-from outer (* a b c))))))
+
+;; Sieve of Erotosthenes Algorithm
+(defun soe-primes (n)
+  (let ((marked '()))
+    (iter (for x from 2 to n)
+          (when (member x marked)
+            (next-iteration))
+          (iter (for y from (sqr x) below n)
+            (when (zerop (mod y x))
+              (push y marked)))
+          (sum x))))
