@@ -789,7 +789,7 @@
                        (subseq list 0 (1+ k))
                        (reverse (subseq list (1+ k)))))
 
-          (format t "(~{~a~^ ~}) | ~a, ~a~%" list k l))))
+          ()(format t "(~{~a~^ ~}) | ~a, ~a~%" list k l))))
 
 
 

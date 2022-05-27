@@ -2,7 +2,8 @@
   :version "0.1.0"
   :author "Hamza Shahid"
   :license "BSD 2 Clause License"
-  :depends-on ("str"
+  :depends-on ("alexandria"
+               "str"
                "iterate"
                "gtwiwtg"
                "cl-punch")
