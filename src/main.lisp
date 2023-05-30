@@ -40,29 +40,29 @@
 
 (defun p2 (n)
   (loop :for x :from 1
-    :while (< (fib2 x) n)
-    :if (evenp (fib2 x))
-    :sum (fib2 x)))
+        :while (< (fib2 x) n)
+        :if (evenp (fib2 x))
+        :sum (fib2 x)))
 
 ;;-------------------------------------------------------
 
 ;; Is very fast but small numbers like 15 aren't accurate
 ;; for accurate (small nums) but slow use commented line
-;;(loop :for x :from 2 :upto (1- n)
+;; (loop :for x :from 2 :upto (1- n)
 ;; We can use and since it is short circuited. This is why
 ;; we don't have to seperate it into after math
 (defun primes (n)
   (loop :for x :from 2 :upto (sqrt n)
-    :if (and (= (mod n x) 0)
-             (null (primes x)))
-    :collect x))
+        :if (and (= (mod n x) 0)
+                 (null (primes x)))
+        :collect x))
 
 ;; Accurate prime factors
 (defun acc-primes (n)
   (loop :for x :from 2 :upto (1- n)
-    :if (and (= (mod n x) 0)
-             (null (primes x)))
-    :collect x))
+        :if (and (= (mod n x) 0)
+                 (null (primes x)))
+        :collect x))
 
 (defun p3 (n)
   (apply #'max (primes n)))
@@ -80,28 +80,28 @@
 
 (defun p4 ()
   (loop :for x :from 999 :downto 900
-    :append (loop :for y :from 999 :downto 900
-              :if (= (* x y)
-                     (num-palindrome (* x y)))
-              :collect (* x y))))
+        :append (loop :for y :from 999 :downto 900
+                      :if (= (* x y)
+                            (num-palindrome (* x y)))
+                      :collect (* x y))))
 
 ;;-------------------------------------------------------
 
 (defun p5-slow ()
   (loop :for x :from 1
-    :if (every #'identity
-          (mapcar
-	        #'(lambda (y)
-                (= (mod x y) 0))
-            (loop :for i :from 3 :upto 20
-              :collect i)))
-    :do (return x)))
+        :if (every #'identity
+            (mapcar
+                #'(lambda (y)
+                    (= (mod x y) 0))
+                (loop :for i :from 3 :upto 20
+                      :collect i)))
+        :do (return x)))
 
 ;; Take the LCM, faaaaaaaaaaaaaast way
 (defun p5 ()
   (apply #'lcm
     (loop :for i :from 1 :upto 20
-      :collect i)))
+          :collect i)))
 
 ;;-------------------------------------------------------
 
@@ -122,11 +122,10 @@
 (defun p6-all-in-one (n)
   (flet ((sqr (num)
            (* num num)))
-    (-
-      (sqr (loop :for x :from 1 :upto n
-             :sum x))
-      (loop :for x :from 1 :upto n
-        :sum (sqr x)))))
+    (- (sqr (loop :for x :from 1 :upto n
+                  :sum x))
+       (loop :for x :from 1 :upto n
+             :sum (sqr x)))))
 
 ;; nth prime number
 (defun p7 (n)
@@ -171,7 +170,7 @@
     ;;     :collect (* a b c d e f g h i j k l m)))
 
     ;; SLOWER!!!
-    (loop for stuff = digits
-      then (cdr stuff)
-      until (< (length stuff) 13)
-      maximize (apply #'* (subseq stuff 0 13)))))
+    (loop :for stuff = digits
+          :then (cdr stuff)
+          :until (< (length stuff) 13)
+          :maximize (apply #'* (subseq stuff 0 13)))))

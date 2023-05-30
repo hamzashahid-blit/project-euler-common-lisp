@@ -527,54 +527,139 @@
                    lower-diag-prod-lr upper-diag-prod-lr))
     (format t "~&+----------------------+~%")))
 
+;;-------------------------------------------------------
+
+;; (defun divisors (n)
+;;   (let ((divs (iter (for i from 2 below n)
+;;                     (when (zerop (mod n i))
+;;                       (collect i)))))
+;;     (a:flatten (list 1 divs n))))
+
+;; (defun divisors-length (n)
+;;   (let ((fst-div (iter (for i from 2 below n)
+;;                        (when (zerop (mod n i))
+;;                          (return i))))
+;;         (c 2))
+
+;;     (if (null fst-div)
+;;       c
+;;       (iter (for i from fst-div to (/ n fst-div))
+;;             (when (zerop (mod n i))
+;;               (incf c))
+;;             (finally (return c))))))
+
+;; (defun prime-factors (n)
+;;   )
+
+;; (defun triangle-number (n)
+;;   (/ (* n (1+ n)) 2))
+
+;; (defun p12 (num &optional (max-primes 10000000))
+;;   (format t "Generating primes upto ~a~%" max-primes)
+;;   (let (;(primes (coerce (fastest-primes max-primes) 'list))
+;;          )
+;;     (format t "Done~%")
+;;     (iter (for i from 2000000 by 2)
+;;           ;; when (and (zerop (mod i 10))
+;;           ;;        (not (member i primes)))
+;;       (for tri = (triangle-number i))
+;;       (when (> (divisors-length tri) num)
+;;         (return tri)))))
+
+;; (defun triangle-number-slow (n)
+;;   (iter (for x from 1 to n)
+;;         (sum x)))
+
+;; SLOOOOW;Fast: (n(n+1)) / 2
+;; (defun p12-slow (num)
+;;   (iter (for i from 1)
+;;         (for tri = (triangle-number-slow i))
+;;         (when (> (+ 2 (length (divisors tri))) num)
+;;           (return tri))))
+
+
+
+
+
+
+
+
+
+
+(defun p10 ()
+  (let* ((initial-primes #(2 3 5))
+         (sum (reduce #'+ initial-primes :initial-value 0))
+         (primes (make-array (length initial-primes)
+                             :element-type '(unsigned-byte 32)
+                             :initial-contents initial-primes
+                             :adjustable t
+                             :fill-pointer t)))
+    ;; (declare (dynamic-extent primes)) Slower
+    (loop :named outer-loop
+          :for candidate :from 7 :below 2000000 :by 2
+          :do (loop :named inner-loop
+                    :for prime :across primes
+                    :until (> (* prime prime) candidate)
+                    ;; :while (<= prime (sqrt candidate)) faster then isqrt but slow
+                    :when (zerop (mod candidate prime))
+                    :do (return-from inner-loop)
+                    :finally (progn
+                               (incf sum candidate)
+                               (vector-push-extend candidate primes)))
+                    :finally (let ((counter (length primes)))
+                               (return-from p10 (values counter sum))))))
+
+
+;;; LONG TIME LATER ATTEMPT
+
+;; CREDIT FOR DIVISORS => https://github.com/skeeto/euler-cl/blob/master/common.lisp#L17
 (defun divisors (n)
-  (let ((divs (iter (for i from 2 below n)
-                    (when (zerop (mod n i))
-                      (collect i)))))
+  (loop :for i :from 1 :to (sqrt n)
+        :when (zerop (mod n i)) :collect i :into small :and :collect (/ n i) :into large
+        :finally (return (delete-duplicates (nconc small (nreverse large))))))
 
-    (a:flatten (list 1 divs n))))
+(defun p12 ()
+  (loop :for x :from 1
+        :for i := x :then (+ i x)
+        :when (> (length (divisors i)) 500)
+        :return i))
 
-(defun divisors-length (n)
-  (let ((fst-div (iter (for i from 2 below n)
-                       (when (zerop (mod n i))
-                         (return i))))
-        (c 2))
+;; ;; UNOPTIMIZED
+;; (defun divisor-count (n)
+;;   (+ 2 (loop :for i :from 2 :to (1- n)
+;;              :when (zerop (mod n i))
+;;              :count i)))
+;; ;; OPTIMIZED
+;; (defun divisor-count (n)
+;;   (let* ((limit (if (evenp n) (/ n 2) (1- n)))
+;;          (result (loop :for i :from 2 :upto (sqrt (1+ n))
+;;                        :when (zerop (mod n (the fixnum i)))
+;;                        :count i)))
+;;     (declare (type fixnum n limit)
+;;              (type (unsigned-byte 32) result)
+;;              (optimize (safety 0) (debug 0) (speed 3)))
+;;     (+ 2 result)))
+;; ;; USING PRIMES
+;; (defun p12-primes (n)
+;;   (let* ((initial-primes #(2 3 5))
+;;          (primes (make-array (length initial-primes)
+;;                              :element-type '(unsigned-byte 32)
+;;                              :initial-contents initial-primes
+;;                              :adjustable t
+;;                              :fill-pointer t)))
+;;     (loop :named outer-loop
+;;           :for candidate :from 7 :below n :by 2
+;;           :do (loop :named inner-loop
+;;                     :for prime :across primes
+;;                     :until (> (* prime prime) candidate)
+;;                     :when (zerop (mod candidate prime))
+;;                     :do (return-from inner-loop)
+;;                     :finally (vector-push-extend candidate primes))
+;;           :finally (return-from p12-primes primes))))
 
-    (if (null fst-div)
-      c
-      (iter (for i from fst-div to (/ n fst-div))
-            (when (zerop (mod n i))
-              (incf c))
-            (finally (return c))))))
+;; (defparameter p12-primes (reverse (coerce (p12-primes 20000000) 'list)))
 
-(defun prime-factors (n)
-  )
-
-(defun triangle-number (n)
-  (/ (* n (1+ n)) 2))
-
-(defun p12 (num &optional (max-primes 10000000))
-  (format t "Generating primes upto ~a~%" max-primes)
-  (let (;(primes (coerce (fastest-primes max-primes) 'list))
-         )
-    (format t "Done~%")
-    (iter (for i from 2000000 by 2)
-          ;; when (and (zerop (mod i 10))
-          ;;        (not (member i primes)))
-      (for tri = (triangle-number i))
-      (when (> (divisors-length tri) num)
-        (return tri)))))
-
-  ;; (defun triangle-number-slow (n)
-  ;;   (iter (for x from 1 to n)
-  ;;         (sum x)))
-
-  ;; SLOOOOW;Fast: (n(n+1)) / 2
-  ;; (defun p12-slow (num)
-  ;;   (iter (for i from 1)
-  ;;         (for tri = (triangle-number-slow i))
-  ;;         (when (> (+ 2 (length (divisors tri))) num)
-  ;;           (return tri))))
+;;-------------------------------------------------------
 
 (defun p13 ()
     ;; Get text from file and remove the last empty line
@@ -791,14 +876,6 @@
 
           (format t "(~{~a~^ ~}) | ~a, ~a~%" list k l))))
 
-
-
-
-
-
-
-
-
           ;; (loop :named inner
           ;;   :with k := -1
           ;;   :with k+1 := 0
@@ -814,3 +891,112 @@
           ;;              (return-from inner
           ;;                (values k (position (apply #'max list)
           ;;                                    list)))))
+
+
+(defun p25 ()
+  (loop :for i :from 0
+        :when (>= (length (write-to-string (fib2 i))) 1000)
+          :return i))
+
+;; ---------------------------------------------
+
+(defun pandigital? (n)
+  "Returns T if N is 1 through 9 pandigital, and NIL otherwise.
+N must be an integer. This also means that N must also not contain any other digits
+besides 1 to 9 except at the start."
+  (let ((num (write-to-string n))
+        (has-digits (list nil nil nil nil nil nil nil nil nil)))
+    (loop :for char :across num
+          :for digit := (parse-integer (string char))
+          :do (unless (= digit 0)
+                (if (and (>= digit 1) (<= digit 9)
+                         (null (elt has-digits (1- digit))))
+                  (setf (elt has-digits (1- digit)) t)
+                  (return-from pandigital? nil))))
+    (every #'identity has-digits)))
+
+;; https://math.stackexchange.com/questions/195396/searching-for-pandigital-numbers
+;; instead of doing a = 1..9999 & b = 1..9999
+;; we know that c <= 9999 since 10 digit pandigital number
+;; and a * b = c  therefore,  b = c/a
+;; as for a, 9999/2 = 5000 (almost)
+;; we know that 500 * 2 = 2 * 500 so we can halve
+(defun p32 ()
+  (let ((products '()))
+    (loop :for a :from 1 :to 5000
+          :do (loop :for b :from a :to (/ 9999 a)
+                    :for product := (* a b) 
+                    :for identity := (str:concat (write-to-string a)
+                                                 (write-to-string b)
+                                                 (write-to-string product))
+                    :do (when (pandigital? (parse-integer identity))
+                          (format t "FOUND: ~a x ~a = ~a~%" a b product)
+                          (push product products))))
+    (format t "Products:     ~a~%" products)
+    (format t "Deduplicated: ~a~%" (remove-duplicates products :test #'=))
+    (apply #'+ (remove-duplicates products :test #'=))))
+
+;; ---------------------------------------------
+
+(defun divisors (n)
+  (let ((divs (loop :for i :from 2 :below n
+                    :when (zerop (mod n i))
+                      :collect i)))
+    (cons 1 divs)))
+
+(defun divisors-sum (n)
+  (reduce #'+ (divisors n)))
+
+(defun abundant-p (n)
+  (> (divisors-sum n) n))
+
+(defun sum-of-two-abundants-p (n)
+  (let ((abundants
+          (loop :for i :from 1 :to 28123
+                :when (abundant-p i)
+                :collect i)))
+    (loop :for i :from 1 :below n
+          :when (and (abundant-p i) (abundant-p (- n i)))
+            :do (return-from sum-of-two-abundants-p t))))
+
+(defun p23 ()
+  (loop :for i :from 1 :to 28123
+        :when (not (sum-of-two-abundants-p i))
+          :collect i))
+
+
+
+
+;; (defun abundant-numbers ()
+;;   "List of abundant numbers from 12 to 28123"
+;;   (let ((list '()))
+;;     (loop :for n :from 12 :to 28123
+;;           :do (when (> (divisors-sum n) n)
+;;                 (push n list)))
+;;     (reverse list)))
+
+;; (defun sums-of-abundant-numbers ()
+;;   (format t "Generating abundant numbers...~%")
+;;   (let ((abundant-numbers (abundant-numbers))
+;;         (list '()))
+;;     (format t "Calculating sums...~%")
+;;     (loop :for i :in abundant-numbers
+;;           :do (loop :for j :in abundant-numbers
+;;                 :do (push (+ i j) list))
+;;               (print i))
+;;     (format t "Done.~%")
+;;     (reverse list)))
+
+;; (defun p23 ()
+;;   (let ((abundant-sums (sums-of-abundant-numbers))
+;;         (list '())) 
+;;     (loop :for i :from 24 :to 28123
+;;           :do (unless (member i abundant-sums)
+;;                 (push i list)))))
+
+;; (defun p23 ()
+;;   (set-difference 
+;;     (loop :for i :from 24 :to 28123
+;;       :collect i)
+;;     (sums-of-abundant-numbers)))
+
