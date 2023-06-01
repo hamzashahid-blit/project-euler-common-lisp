@@ -751,7 +751,7 @@
 
 ;; NOT my answer
 (defun p15-fastest ()
-  (choose 40 20))
+  (choose (+ 20 20) 20))
 
 ;; ---------------
 
@@ -780,40 +780,73 @@
 
 ;; ---------------
 
-;; ;; Failed to understand problem, still failed to implement ;(
-;; (defun p18 ()
-;;   (let ((triangle '((75)
-;;                     (95 64)
-;;                     (17 47 82)
-;;                     (18 35 87 10)
-;;                     (20 04 82 47 65)
-;;                     (19 01 23 75 03 34)
-;;                     (88 02 77 73 07 63 67)
-;;                     (99 65 04 28 06 16 70 92)
-;;                     (41 41 26 56 83 40 80 70 33)
-;;                     (41 48 72 33 47 32 37 16 94 29)
-;;                     (53 71 44 65 25 43 91 52 97 51 14)
-;;                     (70 11 33 28 77 73 17 78 39 68 17 57)
-;;                     (91 71 52 38 17 14 91 43 58 50 27 29 48)
-;;                     (63 66 04 68 89 53 67 30 73 16 69 87 40 31)
-;;                     (04 62 98 27 23 09 70 98 73 93 38 53 60 04 23))))
+(defparameter p18-small '((3)
+                         (7 4)
+                        (2 4 6)
+                       (8 5 9 3)))
+(defparameter p18-big '((75)
+                       (95 64)
+                      (17 47 82)
+                     (18 35 87 10)
+                    (20 04 82 47 65)
+                   (19 01 23 75 03 34)
+                  (88 02 77 73 07 63 67)
+                 (99 65 04 28 06 16 70 92)
+                (41 41 26 56 83 40 80 70 33)
+               (41 48 72 33 47 32 37 16 94 29)
+              (53 71 44 65 25 43 91 52 97 51 14)
+             (70 11 33 28 77 73 17 78 39 68 17 57)
+            (91 71 52 38 17 14 91 43 58 50 27 29 48)
+           (63 66 04 68 89 53 67 30 73 16 69 87 40 31)
+          (04 62 98 27 23 09 70 98 73 93 38 53 60 04 23)))
 
-;;     ;; (print (cdr triangle))
+;; if rows = 4, paths as 0 = left, 1 = right adjacent, every digit is 1 more depth
+;; col = bit + prevbit 
+;; 0 | 0 0 0   | 0 0 0   | 1 0, 2 0, 3 0
+;; 0 | 0 0 1   | 0 0 1   | 
+;; 0 | 0 1 0   | 0 1 1   | 
+;; 0 | 0 1 1   | 0 1 2   | 
+;; 0 | 1 0 0   | 1 1 1   | 
+;; 0 | 1 0 1   | 1 1 2   | 
+;; 0 | 1 1 0   | 1 2 2   | 
+;; 0 | 1 1 1   | 1 2 3   | 
+;; We made it to binary!!!
 
-;;     (loop :with acc = (first (first triangle))
-;;           :with a = 0
-;;           :with b = 1
-;;           :for row :in (cdr triangle)
-;;           :do (if (<= (elt row a) (elt row b))
-;;                 (progn
-;;                   (incf acc (elt row b))
-;;                   (incf a)
-;;                   (incf b)
-;;                   (format t "~a, " (elt row b)))
-;;                 (progn
-;;                   (incf acc (elt row a))
-;;                   (format t "~a, " (elt row a))))
-;;           :finally (return-from p18 acc))))
+;; could do it as bit vector
+(defun p18-binary-paths (rows)
+  (loop :for j :below (expt 2 (1- rows))
+        :collect (loop :for i :from (- rows 2) :downto 0
+                       :collect (if (logbitp i j) 1 0))))
+
+(defun p18-relative-paths (rows)
+  (loop :for path :in (p18-binary-paths rows)
+    :collect (cons 0 (let ((paths '()))
+                       (reduce (lambda (a b) 
+                                 (a:appendf paths (list (+ a b)))
+                                 (+ a b)) 
+                         path)
+                       (cons (car path) paths)))))
+
+(defun p18-paths (triangle)
+  (loop :for path :in (p18-relative-paths (length triangle))
+        :collect (loop :for row :in path
+                       :for i :from 0
+                       :collect (elt (elt triangle i) row))))
+
+(defun p18 (triangle)
+  (apply #'max (mapcar (lambda (x) (apply #'+ x)) (p18-paths triangle))))
+
+;; <pjb> HamzaShahid: also, why use list of bits? You could use bit-vectors
+;; 	  instead.  (defun integer-to-list-of-bits (n width) (loop with result =
+;; 	  (make-array width :element-type 'bit :initial-element 0) for i below
+;; 	  width when (logbitp i n) do (setf (aref result i) 1) finally (return
+;; 	  result)))  (all-bit-combinations 3) #| --> (#*000 #*100 #*010 #*110
+;; 	  #*001 #*101 #*011 #*111) |#
+;; <pjb> HamzaShahid: perhaps you could even use 2D arrays of bits? (make-array
+;; 	  '(8 3) :element-type 'bit :initial-contents (all-bit-combinations 3)) #|
+;; 	  --> #2A(#*000 #*100 #*010 #*110 #*001 #*101 #*011 #*111) |# ?  [01:33]
+
+;; ---------------
 
 (defun p20 ()
   (sum-of-digits (! 100)))
